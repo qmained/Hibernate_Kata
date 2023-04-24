@@ -8,7 +8,11 @@ public class Util {
     // реализуйте настройку соеденения с БД
 
     private static final String url = "jdbc:mysql://localhost:3306/myDb?user=user&password=pass";
-    public static Connection getConnection() throws SQLException {
-        return DriverManager.getConnection(url);
+    public static Connection getConnection() {
+        try {
+            return DriverManager.getConnection(url);
+        } catch (SQLException e) {
+            throw new RuntimeException();
+        }
     }
 }
