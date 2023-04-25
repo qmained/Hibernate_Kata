@@ -27,33 +27,28 @@ public class Util {
 
     public static SessionFactory getSessionFactory() {
         if (sessionFactory == null) {
-            try {
-                Configuration configuration = new Configuration();
+            Configuration configuration = new Configuration();
 
-                // Hibernate settings
-                Properties settings = new Properties();
-                settings.put(Environment.DRIVER, "com.mysql.cj.jdbc.Driver");
-                settings.put(Environment.URL, "jdbc:mysql://localhost:3306/myDb?useSSL=false");
-                settings.put(Environment.USER, "user");
-                settings.put(Environment.PASS, "pass");
-                settings.put(Environment.SHOW_SQL, "true");
+            // Hibernate settings
+            Properties settings = new Properties();
+            settings.put(Environment.DRIVER, "com.mysql.cj.jdbc.Driver");
+            settings.put(Environment.URL, "jdbc:mysql://localhost:3306/myDb?useSSL=false");
+            settings.put(Environment.USER, "user");
+            settings.put(Environment.PASS, "pass");
+            settings.put(Environment.SHOW_SQL, "true");
 
-                settings.put(Environment.CURRENT_SESSION_CONTEXT_CLASS, "thread");
+            settings.put(Environment.CURRENT_SESSION_CONTEXT_CLASS, "thread");
 
-                settings.put(Environment.HBM2DDL_AUTO, "");
+            settings.put(Environment.HBM2DDL_AUTO, "");
 
-                configuration.setProperties(settings);
+            configuration.setProperties(settings);
 
-                configuration.addAnnotatedClass(User.class);
+            configuration.addAnnotatedClass(User.class);
 
-                ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder()
-                        .applySettings(configuration.getProperties()).build();
+            ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder()
+                    .applySettings(configuration.getProperties()).build();
 
-                sessionFactory = configuration.buildSessionFactory(serviceRegistry);
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            sessionFactory = configuration.buildSessionFactory(serviceRegistry);
 
         }
         return sessionFactory;
