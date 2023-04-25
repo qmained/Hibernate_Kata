@@ -1,15 +1,13 @@
 package jm.task.core.jdbc.dao;
 
-import jakarta.persistence.Query;
-import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaDelete;
 import jm.task.core.jdbc.model.User;
 import jm.task.core.jdbc.util.Util;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.List;
 
 public class UserDaoHibernateImpl implements UserDao {
@@ -20,22 +18,34 @@ public class UserDaoHibernateImpl implements UserDao {
 
     @Override
     public void createUsersTable() {
-        try (Statement st = Util.getConnection().createStatement()) {
-            st.execute("CREATE TABLE IF NOT EXISTS User(" +
+        Transaction transaction = null;
+        try (Session session = Util.getSessionFactory().openSession()) {
+            transaction = session.beginTransaction();
+            session.createNativeQuery("CREATE TABLE IF NOT EXISTS User(" +
                     "id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY ," +
                     "name VARCHAR(40) NOT NULL," +
                     "lastname VARCHAR(40) NOT NULL," +
-                    "age SMALLINT NOT NULL);");
-        } catch (SQLException e) {
+                    "age SMALLINT NOT NULL);", User.class).executeUpdate();
+            transaction.commit();
+        } catch (HibernateException e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
             e.printStackTrace();
         }
     }
 
     @Override
     public void dropUsersTable() {
-        try (Statement st = Util.getConnection().createStatement()) {
-            st.execute("DROP TABLE IF EXISTS User;");
-        } catch (SQLException e) {
+        Transaction transaction = null;
+        try (Session session = Util.getSessionFactory().openSession()) {
+            transaction = session.beginTransaction();
+            session.createNativeQuery("DROP TABLE IF EXISTS User", User.class).executeUpdate();
+            transaction.commit();
+        } catch (HibernateException e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
             e.printStackTrace();
         }
     }
@@ -91,7 +101,9 @@ public class UserDaoHibernateImpl implements UserDao {
         Transaction transaction = null;
         try (Session session = Util.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            session.createQuery("DELETE FROM User").executeUpdate();
+            CriteriaBuilder cb = session.getCriteriaBuilder();
+            CriteriaDelete<User> query = cb.createCriteriaDelete(User.class);
+            session.createMutationQuery(query).executeUpdate();
             transaction.commit();
         } catch (HibernateException e) {
             if (transaction != null) {

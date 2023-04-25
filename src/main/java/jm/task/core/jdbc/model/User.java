@@ -10,8 +10,7 @@ import java.util.Objects;
 public class User {
 
     @Id
-    @GenericGenerator(name="incgenerator" , strategy="increment")
-    @GeneratedValue(generator="incgenerator")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
 
