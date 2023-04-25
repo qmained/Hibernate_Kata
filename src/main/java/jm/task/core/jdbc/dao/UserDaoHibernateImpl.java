@@ -33,7 +33,7 @@ public class UserDaoHibernateImpl implements UserDao {
 
     @Override
     public void dropUsersTable() {
-        try (Statement st = Util.getConnection().createStatement()){
+        try (Statement st = Util.getConnection().createStatement()) {
             st.execute("DROP TABLE IF EXISTS User;");
         } catch (SQLException e) {
             e.printStackTrace();
