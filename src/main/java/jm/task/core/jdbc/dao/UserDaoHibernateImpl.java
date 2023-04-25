@@ -8,6 +8,7 @@ import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class UserDaoHibernateImpl implements UserDao {
@@ -88,6 +89,9 @@ public class UserDaoHibernateImpl implements UserDao {
     public List<User> getAllUsers() {
         try (Session session = Util.getSessionFactory().openSession()) {
             return session.createQuery("FROM User", User.class).list();
+        } catch (HibernateException e) {
+            e.printStackTrace();
+            return new ArrayList<>();
         }
     }
 
